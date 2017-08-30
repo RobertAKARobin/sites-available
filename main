@@ -20,6 +20,21 @@ server {
 }
 server {
   listen 80;
+  server_name *.ineedaprompt.com ineedaprompt.com;
+  location / {
+    proxy_pass http://localhost:3001;
+    proxy_http_version 1.1;
+  }
+  listen 443 ssl;
+  ssl_certificate /etc/letsencrypt/live/ineedaprompt.com/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/ineedaprompt.com/privkey.pem;
+  include /etc/letsencrypt/options-ssl-nginx.conf;
+  if ($scheme != "https") {
+      return 301 https://$host$request_uri;
+  }
+}
+server {
+  listen 80;
   server_name mailgun.robertakarobin.com;
   location / {
     proxy_pass http://localhost:3002;
